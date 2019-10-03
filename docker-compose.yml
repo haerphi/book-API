@@ -8,14 +8,14 @@ services:
     volumes:
       - "./package.json:/src/app/package.json"
       - "./node_modules:/src/app/node_modules"
-      - "./src/app:/src/app"
+      - "./bin:/src/app/bin"
     expose:
       - "12345"
       - "9229"
     ports:
       - "80:12345"
       - "9229"
-    command: "nodemon --inspect=0.0.0.0:9229 --watch index.js"
+    command: "nodemon --inspect=0.0.0.0:9229 --watch bin/server bin/server/index.js"
   postgres:
     image: "postgres"
     restart: "unless-stopped"
