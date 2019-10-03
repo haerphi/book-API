@@ -4,7 +4,10 @@
   "description": "Api de gestion de livres avec authentification",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build:server": "npx babel src/server -s --out-dir bin/server",
+    "work:server": "npx babel src/server -s --watch --verbose --out-dir bin/server",
+    "build": "npm run build:server",
+    "start": "node ./bin/server/index.js"
   },
   "repository": {
     "type": "git",
@@ -26,6 +29,12 @@
     "pg": "^7.12.1"
   },
   "devDependencies": {
+    "@babel/cli": "^7.6.2",
+    "@babel/core": "^7.6.2",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-proposal-decorators": "^7.6.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.6.2",
+    "@babel/preset-env": "^7.6.2",
     "nodemon": "^1.19.3"
   }
 }
