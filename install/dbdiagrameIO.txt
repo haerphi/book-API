@@ -1,0 +1,31 @@
+//// -- LEVEL 1
+//// -- Tables and References
+
+// Creating tables
+Table users as U {
+  id SERIAL UNIQUE
+  email varchar
+  password text
+  admin boolean
+}
+
+Table books {
+  id SERIAL UNIQUE
+  title varchar
+  subTitle varchar
+  editor int
+  format varchar
+  langue int
+  couverture text
+  stock int
+}
+
+table authors {
+  id SERIAL UNIQUE
+  name varchar
+}
+
+table books_has_authors {
+  id_author int [ref: > authors.id]
+  id_book int [ref: > books.id]
+}
