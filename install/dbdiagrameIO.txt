@@ -11,6 +11,7 @@ Table users as U {
 
 Table books {
   id SERIAL UNIQUE
+  ISBN varchar UNIQUE
   title varchar
   subTitle varchar
   editor int
