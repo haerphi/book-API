@@ -12,6 +12,7 @@ CREATE TABLE "users" (
 
 CREATE TABLE "books" (
   "id" SERIAL UNIQUE,
+  "ISBN" varchar UNIQUE,
   "title" varchar,
   "subTitle" varchar,
   "editor" int,
