@@ -1,4 +1,3 @@
-import { doRequest } from "./postgres";
 const Koa = require("koa");
 import { errorHandler } from "./middleware/errorHandler";
 const Router = require("koa-router");
