@@ -7,7 +7,9 @@ CREATE TABLE "users" (
   "id" SERIAL UNIQUE,
   "email" varchar UNIQUE,
   "password" text,
-  "admin" boolean
+  "admin" boolean,
+  "token" text UNIQUE,
+  "tokenDate" date
 );
 
 CREATE TABLE "books" (
@@ -19,9 +21,7 @@ CREATE TABLE "books" (
   "format" varchar,
   "langue" int,
   "couverture" text,
-  "stock" int,
-  "token" text UNIQUE,
-  "tokenDate" date
+  "stock" int
 );
 
 CREATE TABLE "authors" (
