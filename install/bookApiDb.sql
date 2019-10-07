@@ -7,7 +7,7 @@ CREATE TABLE "users" (
   "id" SERIAL UNIQUE,
   "email" varchar UNIQUE,
   "password" text,
-  "admin" boolean,
+  "admin" boolean DEFAULT false,
   "token" text UNIQUE,
   "tokenDate" date
 );
