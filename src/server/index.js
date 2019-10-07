@@ -1,6 +1,6 @@
 import express from "express";
 const bodyParser = require("body-parser");
-import { authenticated, authentification } from "./middleware/auth";
+import { authenticated, authentification, register } from "./middleware/auth";
 
 const app = new express();
 
