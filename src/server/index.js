@@ -1,16 +1,21 @@
 const Koa = require("koa");
-import { errorHandler } from "./middleware/errorHandler";
+const cors = require("@koa/cors");
 const Router = require("koa-router");
 const bodyParser = require("koa-bodyparser");
-
-const authRoute = require("./routes/auth").authRoute;
 
 const app = new Koa();
 const router = new Router();
 
-app.use(errorHandler);
+import { errorHandler } from "./middleware/errorHandler";
+import { authenticated } from "./middleware/authenticated";
 
+const authRoute = require("./routes/auth").authRoute;
+const booksRoute = require("./routes/books").booksRoute;
+
+app.use(errorHandler);
+app.use(cors());
 router.post("/auth", bodyParser(), authRoute);
+router.get("/books", authenticated, booksRoute);
 
 let port = process.env.PORT || 3000;
 
