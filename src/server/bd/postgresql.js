@@ -1,8 +1,10 @@
-export const knex = require("knex")({
+const knex = require("knex");
+
+module.exports = knex({
   client: "pg",
   version: "7.2",
   connection: {
-    host: "127.0.0.1",
+    host: "postgres",
     user: "dev",
     password: "dev",
     database: "booksApi"
