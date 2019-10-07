@@ -19,7 +19,9 @@ CREATE TABLE "books" (
   "format" varchar,
   "langue" int,
   "couverture" text,
-  "stock" int
+  "stock" int,
+  "token" text UNIQUE,
+  "tokenDate" date
 );
 
 CREATE TABLE "authors" (
