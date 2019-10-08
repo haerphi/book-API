@@ -40,7 +40,9 @@ export const authentification = async (req, res, next) => {
         .where("password", password);
       if (rep.length > 0) {
         //if it matches
-        var token = jwt.sign({ email: email, admin: rep[0].admin }, secret_key);
+        var token = jwt.sign({ id: rep[0].id }, secret_key, {
+          expiresIn: "1m"
+        });
         res.send({ sucess: true, token: token });
         await bd
           .from("users")
@@ -68,8 +70,23 @@ export const authentification = async (req, res, next) => {
 export const authenticated = async (req, res, next) => {
   //verify token here
   if (req.headers.authorization) {
-    await next();
+    let token = req.headers.authorization.split(" ")[1];
+    try {
+      var decoded = jwt.verify(token, secret_key);
+      console.log(decoded);
+      let rep = await bd.from("users").where("id", decoded.id);
+      if (rep.length > 0) {
+        next();
+      } else {
+        res.send(
+          "Une erreur est survenue avec les informations dans le token..."
+        );
+      }
+    } catch (err) {
+      res.send(err);
+    }
+  } else {
+    res.send("You need a token to get there");
   }
-  res.send("token unvalidable");
   return false;
 };
