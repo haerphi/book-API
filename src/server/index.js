@@ -1,6 +1,8 @@
 import express from "express";
 const bodyParser = require("body-parser");
-const graphqlHTTP = require("express-graphql");
+//const graphqlHTTP = require("express-graphql");
+const { ApolloServer } = require("apollo-server-express");
+import { typeDefs, resolvers } from "./graphQL/schema";
 
 import { authenticated, authentification, register } from "./middleware/auth";
 
@@ -14,9 +16,19 @@ app.use(bodyParser.json());
 app.post("/get-token", authentification);
 app.post("/register", register);
 
-const schema = require("./schema/schema");
-app.use("/graphql", graphqlHTTP({ schema, graphiql: true }));
-
-// app.use(admin);
+/*applolo*/
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: async ({ req }) => {
+    // get the user token from the headers
+    const token = req.headers.authorization || "";
+    // try to retrieve a user with the token
+    const user = await authenticated(token);
+    // add the user to the context
+    return { user };
+  }
+});
+server.applyMiddleware({ app });
 
 app.listen(port, () => console.log(`listening on port ${port}!`));
