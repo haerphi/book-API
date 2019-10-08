@@ -41,14 +41,9 @@ export const authentification = async (req, res, next) => {
       if (rep.length > 0) {
         //if it matches
         var token = jwt.sign({ id: rep[0].id }, secret_key, {
-          expiresIn: "1m"
+          expiresIn: "59m"
         });
         res.send({ sucess: true, token: token });
-        await bd
-          .from("users")
-          .where("email", email)
-          .where("password", password)
-          .update({ token: token });
       } else {
         res.send("Email and password doesn't match");
       }
