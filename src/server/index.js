@@ -1,5 +1,7 @@
 import express from "express";
 const bodyParser = require("body-parser");
+const graphqlHTTP = require("express-graphql");
+
 import { authenticated, authentification, register } from "./middleware/auth";
 
 const app = new express();
@@ -12,15 +14,8 @@ app.use(bodyParser.json());
 app.post("/get-token", authentification);
 app.post("/register", register);
 
-app.use(authenticated);
-//protected route
-app.post("/books", (req, res) => {
-  console.log("All books");
-  res.send("Here you'll get all books but you'll need to be auth");
-});
-app.post("/test", (req, res) => {
-  res.send("Did it work ?");
-});
+const schema = require("./schema/schema");
+app.use("/graphql", graphqlHTTP({ schema, graphiql: true }));
 
 // app.use(admin);
 
