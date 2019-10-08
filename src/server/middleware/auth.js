@@ -61,27 +61,18 @@ export const authentification = async (req, res, next) => {
   return null;
 };
 
-//est-ce qu'il est authentifier ?
-export const authenticated = async (req, res, next) => {
+//est-ce qu'il est authentifier/token valide ?
+export const authenticated = async token => {
   //verify token here
-  if (req.headers.authorization) {
-    let token = req.headers.authorization.split(" ")[1];
-    try {
-      var decoded = jwt.verify(token, secret_key);
-      console.log(decoded);
-      let rep = await bd.from("users").where("id", decoded.id);
-      if (rep.length > 0) {
-        next();
-      } else {
-        res.send(
-          "Une erreur est survenue avec les informations dans le token..."
-        );
-      }
-    } catch (err) {
-      res.send(err);
+  try {
+    var decoded = jwt.verify(token, secret_key);
+    let rep = await bd.from("users").where("id", decoded.id);
+    if (rep.length > 0) {
+      return rep[0];
+    } else {
+      return { error: "incorrect informations in the token" };
     }
-  } else {
-    res.send("You need a token to get there");
+  } catch (err) {
+    return { error: "invalidable token" };
   }
-  return false;
 };
