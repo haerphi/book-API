@@ -19,7 +19,6 @@ app.post("/books", (req, res) => {
   res.send("Here you'll get all books but you'll need to be auth");
 });
 app.post("/test", (req, res) => {
-  console.log("test");
   res.send("Did it work ?");
 });
 
