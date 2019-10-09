@@ -4,7 +4,8 @@
 // Creating tables
 Table users as U {
   id SERIAL UNIQUE
-  email varchar
+  name varchar UNIQUE
+  email varchar UNIQUE
   password text
   admin boolean
 }
@@ -14,9 +15,9 @@ Table books {
   ISBN varchar UNIQUE
   title varchar
   subTitle varchar
-  editor int
+  editor varchar
   format varchar
-  langue int
+  langue varchar
   couverture text
   stock int
 }
@@ -24,6 +25,29 @@ Table books {
 table authors {
   id SERIAL UNIQUE
   name varchar
+}
+
+table emprunts {
+  id SERIAL UNIQUE
+  id_book int [ref: > books.id]
+  id_user int [ref: > users.id]
+  date_location date
+  date_rendu date 
+}
+
+table critiques {
+  id SERIAL
+  title varchar
+  comment text
+  evaluation int
+  id_user int [ref: > users.id]
+  id_book int [ref: > books.id]
+}
+
+table avis_critique {
+  pertinent boolean
+  id_user int [ref: > users.id]
+  id_critique int [ref: > critiques.id]
 }
 
 table books_has_authors {
