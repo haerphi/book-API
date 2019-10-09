@@ -65,7 +65,7 @@ export const authentification = async (req, res, next) => {
 export const authenticated = async token => {
   //verify token here
   try {
-    var decoded = jwt.verify(token, secret_key);
+    var decoded = jwt.verify(token.split(" ")[1], secret_key);
     let rep = await bd.from("users").where("id", decoded.id);
     if (rep.length > 0) {
       return rep[0];
