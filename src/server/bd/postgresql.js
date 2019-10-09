@@ -4,6 +4,7 @@ let user = null;
 let mdp = null;
 let host = null;
 let database = null;
+let port = null;
 
 let url = process.env.DATABASE_URL;
 if (url) {
