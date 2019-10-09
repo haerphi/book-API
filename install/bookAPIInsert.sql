@@ -1,4 +1,4 @@
-INSERT INTO users (email) VALUES ('Plow@gmail.com');
+INSERT INTO users (email, name, password) VALUES ('plow@gmail.com', 'plow', 'plow');
 
 INSERT INTO authors (name) VALUES('J. K. Rowling');
 
