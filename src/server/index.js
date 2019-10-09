@@ -15,6 +15,10 @@ const port = APP_PORT || PORT || 4001;
 app.use(bodyParser.json());
 app.post("/get-token", authentification);
 app.post("/register", register);
+app.get("/test", (req, res) => {
+  console.log("test ok");
+  res.send("test ok");
+});
 
 /*applolo*/
 const server = new ApolloServer({
@@ -31,4 +35,4 @@ const server = new ApolloServer({
 });
 server.applyMiddleware({ app });
 
-app.listen(port, () => console.log(`listening on port ${port}!`));
+app.listen(port, () => console.log(`🚀🚀🚀 Listening on port: ${port}!`));
