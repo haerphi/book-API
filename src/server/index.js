@@ -15,10 +15,6 @@ const port = APP_PORT || PORT || 4001;
 app.use(bodyParser.json());
 app.post("/get-token", authentification);
 app.post("/register", register);
-app.get("/test", (req, res) => {
-  console.log("test ok");
-  res.send("test ok");
-});
 
 /*applolo*/
 const server = new ApolloServer({
@@ -31,8 +27,14 @@ const server = new ApolloServer({
     const user = await authenticated(token);
     // add the user to the context
     return { user };
-  }
+  },
+  introspection: true,
+  playground: true
 });
 server.applyMiddleware({ app });
+
+app.get("/", (req, res) => {
+  res.send("the app is coming soon <br> but you can /graphql");
+});
 
 app.listen(port, () => console.log(`🚀🚀🚀 Listening on port: ${port}!`));
