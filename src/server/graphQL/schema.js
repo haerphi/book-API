@@ -31,6 +31,7 @@ export const typeDefs = gql`
     name: String
     critiques: [Critique]
     emprunts: [Emprunt]
+    avis: [Avis]
   }
 
   type Critique {
@@ -175,6 +176,9 @@ export const resolvers = {
     },
     async emprunts(user) {
       return await bd.from("emprunts").where("id_user", user.id);
+    },
+    async avis(user) {
+      return await bd.from("avis_critique").where("id_user", user.id);
     }
   },
   Critique: {
@@ -185,7 +189,6 @@ export const resolvers = {
       return (await bd.from("users").where("id", critique.id_user))[0];
     },
     async pertinent(critique) {
-      console.log(critique);
       return (await bd
         .from("avis_critique")
         .where("id_critique", critique.id)

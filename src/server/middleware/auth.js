@@ -67,7 +67,9 @@ export const authentification = async (req, res, next) => {
 export const authenticated = async token => {
   //verify token here
   try {
-    var decoded = jwt.verify(token.split(" ")[1], secret_key);
+    let go = token.split(" ")[1];
+
+    var decoded = jwt.verify(go, secret_key);
     let rep = await bd.from("users").where("id", decoded.id);
     if (rep.length > 0) {
       return rep[0];
@@ -75,6 +77,8 @@ export const authenticated = async token => {
       return { error: "incorrect informations in the token" };
     }
   } catch (err) {
+    console.log(err);
+
     return { error: "invalidable token" };
   }
 };
