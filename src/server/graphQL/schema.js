@@ -94,6 +94,7 @@ export const typeDefs = gql`
       stock: Int!
       authors: [String]!
     ): Book
+
     addBookISBN(
       ISBN: String!
       stock: Int!
@@ -101,11 +102,6 @@ export const typeDefs = gql`
       format: String
       couverture: String
     ): Book
-  }
-
-  enume Role{
-    user
-    admin
   }
 `;
 
@@ -129,7 +125,7 @@ export const resolvers = {
       return rep[0];
     },
 
-    authors: async () => {
+    authors: async (parent, args, context) => {
       if (!context.user.id) {
         throw new Error(context.user.error);
       }
@@ -143,21 +139,31 @@ export const resolvers = {
       return rep[0];
     },
 
-    users: async () => {
+    users: async (parent, args, context) => {
       if (!context.user.id) {
         throw new Error(context.user.error);
       }
-      return await bd.from("users");
+      if (context.user.role === "admin") {
+        return await bd.from("users");
+      } else {
+        throw new Error("You must be admin.");
+      }
     },
     user: async (parent, args, context) => {
       if (!context.user.id) {
         throw new Error(context.user.error);
       }
-      const rep = await bd.from("users").where("id", args.id);
-      return rep[0];
+      console.log(context.user.role);
+      if (context.user.role === "admin") {
+        const rep = await bd.from("users").where("id", args.id);
+        return rep[0];
+      } else {
+        console.log("nop");
+        throw new Error("You must be admin.");
+      }
     },
 
-    critiques: async () => {
+    critiques: async (parent, args, context) => {
       if (!context.user.id) {
         throw new Error(context.user.error);
       }
@@ -171,7 +177,7 @@ export const resolvers = {
       return rep[0];
     },
 
-    emprunts: async () => {
+    emprunts: async (parent, args, context) => {
       if (!context.user.id) {
         throw new Error(context.user.error);
       }
@@ -193,7 +199,7 @@ export const resolvers = {
       return rep;
     },
 
-    avis: async () => {
+    avis: async (parent, args, context) => {
       if (!context.user.id) {
         throw new Error(context.user.error);
       }
@@ -223,7 +229,6 @@ export const resolvers = {
         if (authorName.length < 1) {
           //ajout de l'auteur dans la bd
           await bd("authors").insert({ name: args.authors[i] });
-          console.log(`Yeahh, un nouvel auteur ! ${args.authors[i]}`);
         }
       }
 
