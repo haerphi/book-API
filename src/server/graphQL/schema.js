@@ -27,7 +27,6 @@ export const typeDefs = gql`
   }
 
   type User {
-    id: String
     email: String
     name: String
     critiques: [Critique]
