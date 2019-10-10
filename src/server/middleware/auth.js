@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 import bd from "../bd/postgresql";
 
-const secret_key = "banana";
+const secret_key = process.env.SECRET_KEY;
 
 export const register = async (req, res, next) => {
   if (req.body) {
