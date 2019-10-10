@@ -77,8 +77,6 @@ export const authenticated = async token => {
       return { error: "incorrect informations in the token" };
     }
   } catch (err) {
-    console.log(err);
-
     return { error: "invalidable token" };
   }
 };
