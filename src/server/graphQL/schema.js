@@ -73,12 +73,14 @@ export const typeDefs = gql`
 
     critiques: [Critique]
     critique(id: String!): Critique
+
     emprunts: [Emprunt]
     empruntsByBook(id: String!): [Emprunt]
     empruntsByUser(id: String!): [Emprunt]
 
     avis: [Avis]
   }
+
   type Mutation {
     addAuthor(name: String!): Author
     addBook(
@@ -99,6 +101,11 @@ export const typeDefs = gql`
       format: String
       couverture: String
     ): Book
+  }
+
+  enume Role{
+    user
+    admin
   }
 `;
 
