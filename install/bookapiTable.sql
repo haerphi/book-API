@@ -40,7 +40,7 @@ CREATE TABLE "emprunts" (
 );
 
 CREATE TABLE "critiques" (
-  "id" SERIAL,
+  "id" SERIAL UNIQUE,
   "title" varchar,
   "comment" text,
   "evaluation" int,
