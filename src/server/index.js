@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 //const graphqlHTTP = require("express-graphql");
 const { ApolloServer } = require("apollo-server-express");
 import { typeDefs, resolvers } from "./graphQL/schema";
+import bd from "./bd/postgresql";
 
 import { authenticated, authentification, register } from "./middleware/auth";
 
@@ -24,7 +25,10 @@ const server = new ApolloServer({
     // get the user token from the headers
     const token = req.headers.authorization || "";
     // try to retrieve a user with the token
-    const user = await authenticated(token);
+    let user = await authenticated(token);
+    if (user.id) {
+      user = (await bd.from("users").where("id", user.id))[0];
+    }
     // add the user to the context
     return { user };
   },
