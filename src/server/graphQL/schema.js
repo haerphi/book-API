@@ -28,6 +28,7 @@ export const typeDefs = gql`
   type User {
     id: String
     email: String
+    name: String
     critiques: [Critique]
     emprunts: [Emprunt]
   }
@@ -39,6 +40,8 @@ export const typeDefs = gql`
     evaluation: String
     user: User
     book: Book
+    pertinent: Int
+    nonPertinent: Int
   }
 
   type Emprunt {
@@ -47,6 +50,12 @@ export const typeDefs = gql`
     user: User
     date_location: String
     date_rendu: String
+  }
+
+  type Avis {
+    pertinent: Boolean
+    user: User
+    critique: Critique
   }
 
   # toute les futures queries
@@ -65,6 +74,11 @@ export const typeDefs = gql`
     emprunts: [Emprunt]
     empruntsByBook(id: String!): [Emprunt]
     empruntsByUser(id: String!): [Emprunt]
+
+    avis: [Avis]
+  }
+  type Mutation {
+    addAuthor(name: String): Author
   }
 `;
 
@@ -100,20 +114,29 @@ export const resolvers = {
       return rep[0];
     },
 
-    critiques: async () => await bd.from("critique"),
+    critiques: async () => await bd.from("critiques"),
     critique: async (parent, args, context) => {
-      const rep = await bd.from("critique").where("id", args.id);
+      const rep = await bd.from("critiques").where("id", args.id);
       return rep[0];
     },
 
     emprunts: async () => await bd.from("emprunts"),
     //faire emprunts en recherchant livre ou user
     empruntsByBook: async (parent, args, context) => {
-      const rep = await bd.from("emprunts").where("id_book", args.id_book);
+      const rep = await bd.from("emprunts").where("id_book", args.id);
       return rep;
     },
     empruntsByUser: async (parent, args, context) => {
-      const rep = await bd.from("emprunts").where("id_user", args.id_user);
+      const rep = await bd.from("emprunts").where("id_user", args.id);
+      return rep;
+    },
+
+    avis: async () => await bd.from("avis_critique")
+  },
+  Mutation: {
+    addAuthor: async (parent, args, context) => {
+      await bd("authors").insert({ name: args.name });
+      const rep = (await bd.from("authors").where("name", args.name))[0];
       return rep;
     }
   },
@@ -160,6 +183,19 @@ export const resolvers = {
     },
     async user(critique) {
       return (await bd.from("users").where("id", critique.id_user))[0];
+    },
+    async pertinent(critique) {
+      console.log(critique);
+      return (await bd
+        .from("avis_critique")
+        .where("id_critique", critique.id)
+        .where("pertinent", true)).length;
+    },
+    async nonPertinent(critique) {
+      return (await bd
+        .from("avis_critique")
+        .where("id_critique", critique.id)
+        .where("pertinent", false)).length;
     }
   },
   Emprunt: {
@@ -168,6 +204,14 @@ export const resolvers = {
     },
     async user(emprunt) {
       return (await bd.from("users").where("id", emprunt.id_user))[0];
+    }
+  },
+  Avis: {
+    async user(avis) {
+      return (await bd.from("users").where("id", avis.id_user))[0];
+    },
+    async critique(avis) {
+      return (await bd.from("critiques").where("id", avis.id_critique))[0];
     }
   }
 };
