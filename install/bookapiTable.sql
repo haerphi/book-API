@@ -11,7 +11,7 @@ CREATE TABLE "users" (
   "name" varchar UNIQUE,
   "email" varchar UNIQUE,
   "password" text,
-  "admin" boolean DEFAULT false
+  "role" text DEFAULT 'user'
 );
 
 CREATE TABLE "books" (
