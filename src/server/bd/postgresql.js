@@ -7,6 +7,7 @@ let database = null;
 let port = null;
 
 let url = process.env.DATABASE_URL;
+console.log(url);
 if (url) {
   url = url.substr(11);
   user = url.substr(0, url.indexOf(":")); //ok on a récupérer le user

@@ -108,10 +108,14 @@ export const resolvers = {
 
     emprunts: async () => await bd.from("emprunts"),
     //faire emprunts en recherchant livre ou user
-    empruntsByBook: async (parent, args, context) =>
-      await {
-        //do stuff here, I'm tired
-      }
+    empruntsByBook: async (parent, args, context) => {
+      const rep = await bd.from("emprunts").where("id_book", args.id_book);
+      return rep;
+    },
+    empruntsByUser: async (parent, args, context) => {
+      const rep = await bd.from("emprunts").where("id_user", args.id_user);
+      return rep;
+    }
   },
   Book: {
     async authors(book) {
