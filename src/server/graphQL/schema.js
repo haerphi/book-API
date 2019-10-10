@@ -1,5 +1,6 @@
 const { gql } = require("apollo-server-express");
 const lodash = require("lodash");
+import axios from "axios";
 
 import bd from "../bd/postgresql";
 
@@ -79,7 +80,25 @@ export const typeDefs = gql`
     avis: [Avis]
   }
   type Mutation {
-    addAuthor(name: String): Author
+    addAuthor(name: String!): Author
+    addBook(
+      ISBN: String!
+      title: String!
+      subTitle: String!
+      editor: String!
+      format: String!
+      langue: String!
+      couverture: String!
+      stock: Int!
+      authors: [String]!
+    ): Book
+    addBookISBN(
+      ISBN: String!
+      stock: Int!
+      langue: String
+      format: String
+      couverture: String
+    ): Book
   }
 `;
 
@@ -139,6 +158,56 @@ export const resolvers = {
       await bd("authors").insert({ name: args.name });
       const rep = (await bd.from("authors").where("name", args.name))[0];
       return rep;
+    },
+    addBook: async (parent, args, context) => {
+      //parcours des auteurs
+      console.log(args.authors.length);
+      for (let i = 0; i < args.authors.length; i++) {
+        let authorName = await bd
+          .from("authors")
+          .where("name", args.authors[i]);
+        //est-ce que l'auteur existe dans la bd ?
+        if (authorName.length < 1) {
+          //ajout de l'auteur dans la bd
+          await bd("authors").insert({ name: args.authors[i] });
+          console.log(`Yeahh, un nouvel auteur ! ${args.authors[i]}`);
+        }
+      }
+
+      const auteurs = await bd.from("authors").whereIn("name", args.authors);
+
+      //ajout du livre dans la bd
+      await bd("books").insert({
+        ISBN: args.ISBN,
+        title: args.title,
+        subTitle: args.subTitle,
+        editor: args.editor,
+        format: args.format,
+        langue: args.langue,
+        couverture: args.couverture,
+        stock: args.stock
+      });
+      const livre = (await bd.from("books").where("ISBN", args.ISBN))[0];
+      //lien entre l'auteur et le livre dans la bd
+      for (let i = 0; i < auteurs.length; i++) {
+        console.log(parseInt(auteurs[i].id), typeof parseInt(auteurs[i].id));
+        await bd("books_has_authors").insert({
+          id_author: parseInt(auteurs[i].id),
+          id_book: parseInt(livre.id)
+        });
+      }
+
+      return livre;
+    },
+    addBookISBN: async (parent, args, context) => {
+      console.log(args.ISBN);
+
+      let ISBN = args.ISBN.replace(/-/g, "");
+      const livre = await axios.get(
+        `https://openlibrary.org/api/books?bibkeys=ISBN:${ISBN}&jscmd=data`
+      );
+      console.log(livre);
+      console.log(livre.title);
     }
   },
   Book: {
