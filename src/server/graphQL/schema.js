@@ -105,7 +105,13 @@ export const typeDefs = gql`
 //résolver
 export const resolvers = {
   Query: {
-    books: async () => await bd.from("books"),
+    books: async (parent, args, context) => {
+      if (!context.user.id) {
+        throw new Error(context.user.error);
+      }
+      const books = await bd.from("books");
+      return books;
+    },
     book: async (parent, args, context) => {
       //A besoin d'être connecter
       if (!context.user.id) {
@@ -116,7 +122,12 @@ export const resolvers = {
       return rep[0];
     },
 
-    authors: async () => await bd.from("authors"),
+    authors: async () => {
+      if (!context.user.id) {
+        throw new Error(context.user.error);
+      }
+      return await bd.from("authors");
+    },
     author: async (parent, args, context) => {
       if (!context.user.id) {
         throw new Error(context.user.error);
@@ -125,7 +136,12 @@ export const resolvers = {
       return rep[0];
     },
 
-    users: async () => await bd.from("users"),
+    users: async () => {
+      if (!context.user.id) {
+        throw new Error(context.user.error);
+      }
+      return await bd.from("users");
+    },
     user: async (parent, args, context) => {
       if (!context.user.id) {
         throw new Error(context.user.error);
@@ -134,33 +150,62 @@ export const resolvers = {
       return rep[0];
     },
 
-    critiques: async () => await bd.from("critiques"),
+    critiques: async () => {
+      if (!context.user.id) {
+        throw new Error(context.user.error);
+      }
+      return await bd.from("critiques");
+    },
     critique: async (parent, args, context) => {
+      if (!context.user.id) {
+        throw new Error(context.user.error);
+      }
       const rep = await bd.from("critiques").where("id", args.id);
       return rep[0];
     },
 
-    emprunts: async () => await bd.from("emprunts"),
+    emprunts: async () => {
+      if (!context.user.id) {
+        throw new Error(context.user.error);
+      }
+      return await bd.from("emprunts");
+    },
     //faire emprunts en recherchant livre ou user
     empruntsByBook: async (parent, args, context) => {
-      console.log(args);
+      if (!context.user.id) {
+        throw new Error(context.user.error);
+      }
       const rep = await bd.from("emprunts").where("id_book", args.id);
       return rep;
     },
     empruntsByUser: async (parent, args, context) => {
+      if (!context.user.id) {
+        throw new Error(context.user.error);
+      }
       const rep = await bd.from("emprunts").where("id_user", args.id);
       return rep;
     },
 
-    avis: async () => await bd.from("avis_critique")
+    avis: async () => {
+      if (!context.user.id) {
+        throw new Error(context.user.error);
+      }
+      return await bd.from("avis_critique");
+    }
   },
   Mutation: {
     addAuthor: async (parent, args, context) => {
+      if (!context.user.id) {
+        throw new Error(context.user.error);
+      }
       await bd("authors").insert({ name: args.name });
       const rep = (await bd.from("authors").where("name", args.name))[0];
       return rep;
     },
     addBook: async (parent, args, context) => {
+      if (!context.user.id) {
+        throw new Error(context.user.error);
+      }
       //parcours des auteurs
       console.log(args.authors.length);
       for (let i = 0; i < args.authors.length; i++) {
@@ -201,6 +246,9 @@ export const resolvers = {
       return livre;
     },
     addBookISBN: async (parent, args, context) => {
+      if (!context.user.id) {
+        throw new Error(context.user.error);
+      }
       console.log(args.ISBN);
 
       let ISBN = args.ISBN.replace(/-/g, "");
