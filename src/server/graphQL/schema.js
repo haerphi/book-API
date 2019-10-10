@@ -143,6 +143,7 @@ export const resolvers = {
     emprunts: async () => await bd.from("emprunts"),
     //faire emprunts en recherchant livre ou user
     empruntsByBook: async (parent, args, context) => {
+      console.log(args);
       const rep = await bd.from("emprunts").where("id_book", args.id);
       return rep;
     },
