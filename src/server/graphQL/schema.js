@@ -11,9 +11,9 @@ export const typeDefs = gql`
     ISBN: String
     title: String
     subTitle: String
-    editor: Int
+    editor: String
     format: String
-    langue: Int
+    langue: String
     couverture: String
     stock: Int
     authors: [Author]
@@ -263,11 +263,64 @@ export const resolvers = {
       console.log(args.ISBN);
 
       let ISBN = args.ISBN.replace(/-/g, "");
-      const livre = await axios.get(
+      console.log(ISBN);
+      //récupération du livre dans l'API
+      let livre = (await axios.get(
         `https://openlibrary.org/api/books?bibkeys=ISBN:${ISBN}&jscmd=data`
-      );
-      console.log(livre);
+      )).data;
+      //suppression des 18 premiers caractères et du dernier
+      livre = livre.substring(18);
+      livre = livre.substring(0, livre.length - 1);
+      console.log("Console de test " + livre);
+
+      if (livre.length < 3) {
+        throw new Error(
+          `Cet ISBN n'est pas référencé dans l'API openLibrary.org `
+        );
+      }
+      //transformation du String en objet
+      livre = JSON.parse(livre);
+      //Tout l'objet est dans ISBN, ici, on raccourci les requêtes futures en outrepassant automatiquement ce stade ISBN
+      livre = livre[`ISBN:${ISBN}`];
       console.log(livre.title);
+      let auteurs = [];
+      // Récupération des auteurs définis dans l'objet de l'API
+      for (let i = 0; i < livre.authors.length; i++) {
+        let authorName = await bd
+          .from("authors")
+          .where("name", livre.authors[i].name);
+        auteurs.push(livre.authors[i].name);
+        // Si l'auteur n'existe pas
+        if (authorName.length < 1) {
+          // On l'insère dans la bd
+          await bd("authors").insert({ name: livre.authors[i].name });
+        }
+      }
+
+      // utile eplus bas pour lié l'auteur au livre via les ID dans la bd "books_has_authors"
+      auteurs = await bd.from("authors").whereIn("name", auteurs);
+
+      // ajout du livre dans la bd "books"
+      await bd("books").insert({
+        ISBN: ISBN,
+        title: livre.title,
+        subTitle: livre.title.substring(0, 20),
+        editor: livre.publishers[0].name,
+        format: args.format || "Non renseigné",
+        langue: args.langue || "Non renseigné",
+        couverture: args.couverture || "Non disponible",
+        stock: args.stock
+      });
+      livre = (await bd.from("books").where("ISBN", ISBN))[0];
+      console.log(livre);
+
+      for (let i = 0; i < auteurs.length; i++) {
+        await bd("books_has_authors").insert({
+          id_author: parseInt(auteurs[i].id),
+          id_book: parseInt(livre.id)
+        });
+      }
+      return livre;
     }
   },
   Book: {
