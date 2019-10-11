@@ -36,6 +36,7 @@ export const typeDefs = gql`
   }
 
   type Critique {
+    id: Int
     title: String
     comment: String
     evaluation: String
@@ -71,6 +72,7 @@ export const typeDefs = gql`
     user(id: Int): User
 
     critiques: [Critique]
+    critique(id: Int!): Critique
 
     emprunts: [Emprunt]
     empruntsByBook(id: Int!): [Emprunt]
@@ -103,14 +105,15 @@ export const typeDefs = gql`
 
     addCritique(
       id_book: Int!
-      title: String!
+      title: String
       comment: String!
-      evaluation: String!
+      evaluation: Int!
     ): Critique
 
     addAvisCritique(id_critique: Int!, pertinent: Boolean!): Avis
 
-    AddEmprunt(id_book: Int!, id_user: Int!): Emprunt
+    addEmprunt(id_book: Int!, id_user: Int!): Emprunt
+    #livreRendu
   }
 `;
 
@@ -167,6 +170,14 @@ export const resolvers = {
         throw new Error(context.user.error);
       }
       return await bd.from("critiques");
+    },
+
+    critique: async (parent, args, context) => {
+      if (!context.user.id) {
+        throw new Error(context.user.error);
+      }
+      const rep = await bd.from("critiques").where("id", args.id);
+      return rep[0];
     },
 
     emprunts: async (parent, args, context) => {
@@ -376,14 +387,17 @@ export const resolvers = {
         throw new Error("Ce livre n'existe pas dans notre base de donnée");
       }
       const com = {
-        title: args.title,
+        title: args.title || null,
         comment: args.comment,
         evaluation: args.evaluation,
         id_book: args.id_book,
         id_user: context.user.id
       };
 
+      //vérifier si l'utilisateur a déjà fait une critique sur le livre
+      //si non -> insert
       await bd("critiques").insert(com);
+      //si oui -> update
       return com;
     },
     addAvisCritique: async (parent, args, context) => {
@@ -403,7 +417,10 @@ export const resolvers = {
         id_user: context.user.id,
         pertinent: args.pertinent
       };
+      //vérifier si l'utilisateur a déjà poster un avis sur cette critique
+      //si non -> insert
       await bd("avis_critique").insert(avis);
+      //si oui -> update
       return avis;
     }
   },
