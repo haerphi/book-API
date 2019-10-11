@@ -142,24 +142,14 @@ export const resolvers = {
       if (!context.user.id) {
         throw new Error(context.user.error);
       }
-      if (context.user.role === "admin") {
-        return await bd.from("users");
-      } else {
-        throw new Error("You must be admin.");
-      }
+      return await bd.from("users");
     },
     user: async (parent, args, context) => {
       if (!context.user.id) {
         throw new Error(context.user.error);
       }
-      console.log(context.user.role);
-      if (context.user.role === "admin") {
-        const rep = await bd.from("users").where("id", args.id);
-        return rep[0];
-      } else {
-        console.log("nop");
-        throw new Error("You must be admin.");
-      }
+      const rep = await bd.from("users").where("id", args.id);
+      return rep[0];
     },
 
     critiques: async (parent, args, context) => {
@@ -210,6 +200,9 @@ export const resolvers = {
       if (!context.user.id) {
         throw new Error(context.user.error);
       }
+      if (context.user.role !== "admin") {
+        throw new Error("You must be admin");
+      }
       await bd("authors").insert({ name: args.name });
       const rep = (await bd.from("authors").where("name", args.name))[0];
       return rep;
@@ -217,6 +210,9 @@ export const resolvers = {
     addBook: async (parent, args, context) => {
       if (!context.user.id) {
         throw new Error(context.user.error);
+      }
+      if (context.user.role !== "admin") {
+        throw new Error("You must be admin");
       }
       //parcours des auteurs
       console.log(args.authors.length);
@@ -259,6 +255,9 @@ export const resolvers = {
     addBookISBN: async (parent, args, context) => {
       if (!context.user.id) {
         throw new Error(context.user.error);
+      }
+      if (context.user.role !== "admin") {
+        throw new Error("You must be admin");
       }
       console.log(args.ISBN);
 
@@ -308,6 +307,16 @@ export const resolvers = {
     },
     async avis(user) {
       return await bd.from("avis_critique").where("id_user", user.id);
+    },
+    email(user, args, context) {
+      if (!context.user.id) {
+        throw new Error(context.user.error);
+      }
+      if (context.user.role === "admin") {
+        return user.email;
+      } else {
+        return "you must be admin";
+      }
     }
   },
   Critique: {
