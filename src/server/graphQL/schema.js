@@ -109,6 +109,7 @@ export const typeDefs = gql`
     ): Critique
 
     addAvisCritique(id_critique: Int!, pertinent: Boolean!): Avis
+
     AddEmprunt(id_book: Int!, id_user: Int!): Emprunt
   }
 `;
