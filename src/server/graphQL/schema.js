@@ -61,21 +61,21 @@ export const typeDefs = gql`
 
   # toute les futures queries
   type Query {
-    book(id: String!): Book
+    book(id: Int!): Book
     books: [Book]
 
-    author(id: String!): Author
+    author(id: Int!): Author
     authors: [Author]
 
     users: [User]
-    user(id: String): User
+    user(id: Int): User
 
     critiques: [Critique]
-    critique(id: String!): Critique
+    critique(id: Int!): Critique
 
     emprunts: [Emprunt]
-    empruntsByBook(id: String!): [Emprunt]
-    empruntsByUser(id: String!): [Emprunt]
+    empruntsByBook(id: Int!): [Emprunt]
+    empruntsByUser(id: Int!): [Emprunt]
 
     avis: [Avis]
   }
@@ -101,14 +101,15 @@ export const typeDefs = gql`
       format: String
       couverture: String
     ): Book
+
+    addCritique(
+      id_user: Int!
+      id_book: Int!
+      title: String!
+      comment: String!
+      evaluation: String!
+    ): Critique
   }
-  addCritique(
-    id_user: Int!
-    id_book: Int!
-    title: String!
-    comment: String!
-    evaluation: String!
-  ): Critique
 `;
 
 //résolver
