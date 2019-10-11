@@ -108,6 +108,8 @@ export const typeDefs = gql`
     ): Critique
 
     AddEmprunt(id_book: Int!, id_user: Int!): Emprunt
+
+    addAvisCritique(id_critique: Int!, pertinent: Boolean!): Avis
   }
 `;
 
@@ -328,10 +330,29 @@ export const resolvers = {
         id_book: args.id_book,
         id_user: context.user.id
       };
-      console.log(com);
 
       await bd("critiques").insert(com);
       return com;
+    },
+    addAvisCritique: async (parent, args, context) => {
+      if (!context.user.id) {
+        throw new Error(context.user.error);
+      }
+      let id_critique = await bd
+        .from("critiques")
+        .where("id", args.id_critique);
+      if (id_critique.length < 1) {
+        throw new Error(
+          "Cette critique n'existe pas dans notre base de donnée"
+        );
+      }
+      const avis = {
+        id_critique: args.id_critique,
+        id_user: context.user.id,
+        pertinent: args.pertinent
+      };
+      await bd("avis_critique").insert(avis);
+      return avis;
     }
   },
   Book: {
