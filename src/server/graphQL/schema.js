@@ -1,6 +1,7 @@
 const { gql } = require("apollo-server-express");
 const lodash = require("lodash");
 import axios from "axios";
+const { DateTime } = require("luxon");
 
 import bd from "../bd/postgresql";
 
@@ -107,9 +108,8 @@ export const typeDefs = gql`
       evaluation: String!
     ): Critique
 
-    AddEmprunt(id_book: Int!, id_user: Int!): Emprunt
-
     addAvisCritique(id_critique: Int!, pertinent: Boolean!): Avis
+    AddEmprunt(id_book: Int!, id_user: Int!): Emprunt
   }
 `;
 
@@ -314,6 +314,57 @@ export const resolvers = {
         });
       }
       return livre;
+    },
+    addEmprunt: async (parent, args, context) => {
+      if (!context.user.id) {
+        throw new Error(context.user.error);
+      }
+      if (context.user.role !== "admin") {
+        throw new Error("You must be admin");
+      }
+      //vérifier si le livre existe
+      const livre = await bd.from("books").where("id", args.id_book);
+      if (livre.length < 1) {
+        throw new Error("L'id du livre n'existe pas dans la base de donnée");
+      }
+      //vérifier si le user existe
+      const user = await bd.from("books").where("id", args.id_user);
+      if (livre.length < 1) {
+        throw new Error(
+          "L'id de l'utilisateur n'existe pas dans la base de donnée"
+        );
+      }
+
+      const retardUser = await bd
+        .from("emprunts")
+        .where("id_user", args.id_user)
+        .where("date_rendu", null);
+
+      //vérifier si l'utilisateur à moins de 5 emprunts
+      if (retardUser.length >= 5) {
+        throw new Error(
+          `Cette utilisateur a déjà emprunter ${retardUser.length} livres.`
+        );
+      }
+      //vérifier si le user n'a pas de livre en retard
+      retardUser.forEach(el => {
+        let dateL = el.date_location;
+        let delay = Math.floor((Date.now() - dateL) / 86400000);
+        if (delay > 30) {
+          throw new Error("Vous avez un livre en retard.");
+        }
+      });
+
+      const myDate = DateTime.fromObject(Date.now()).toISODate();
+
+      const emprunt = {
+        id_book: args.id_book,
+        id_user: args.id_user,
+        date_location: args.date || myDate
+      };
+
+      await bd("emprunts").insert(emprunt);
+      return emprunt;
     },
     addCritique: async (parent, args, context) => {
       if (!context.user.id) {
