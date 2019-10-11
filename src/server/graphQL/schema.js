@@ -21,7 +21,7 @@ export const typeDefs = gql`
   }
 
   type Author {
-    id: String
+    id: Int
     name: String
     books: [Book]
   }
@@ -35,7 +35,7 @@ export const typeDefs = gql`
   }
 
   type Critique {
-    id: String
+    id: Int
     title: String
     comment: String
     evaluation: String
@@ -46,7 +46,7 @@ export const typeDefs = gql`
   }
 
   type Emprunt {
-    id: String
+    id: Int
     book: Book
     user: User
     date_location: String
@@ -102,6 +102,13 @@ export const typeDefs = gql`
       couverture: String
     ): Book
   }
+  addCritique(
+    id_user: Int!
+    id_book: Int!
+    title: String!
+    comment: String!
+    evaluation: String!
+  ): Critique
 `;
 
 //résolver
