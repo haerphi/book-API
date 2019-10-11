@@ -35,7 +35,6 @@ export const typeDefs = gql`
   }
 
   type Critique {
-    id: Int
     title: String
     comment: String
     evaluation: String
@@ -71,7 +70,6 @@ export const typeDefs = gql`
     user(id: Int): User
 
     critiques: [Critique]
-    critique(id: Int!): Critique
 
     emprunts: [Emprunt]
     empruntsByBook(id: Int!): [Emprunt]
@@ -103,7 +101,6 @@ export const typeDefs = gql`
     ): Book
 
     addCritique(
-      id_user: Int!
       id_book: Int!
       title: String!
       comment: String!
@@ -167,13 +164,6 @@ export const resolvers = {
         throw new Error(context.user.error);
       }
       return await bd.from("critiques");
-    },
-    critique: async (parent, args, context) => {
-      if (!context.user.id) {
-        throw new Error(context.user.error);
-      }
-      const rep = await bd.from("critiques").where("id", args.id);
-      return rep[0];
     },
 
     emprunts: async (parent, args, context) => {
@@ -322,6 +312,26 @@ export const resolvers = {
         });
       }
       return livre;
+    },
+    addCritique: async (parent, args, context) => {
+      if (!context.user.id) {
+        throw new Error(context.user.error);
+      }
+      let id_book = await bd.from("books").where("id", args.id_book);
+      if (id_book.length < 1) {
+        throw new Error("Ce livre n'existe pas dans notre base de donnée");
+      }
+      const com = {
+        title: args.title,
+        comment: args.comment,
+        evaluation: args.evaluation,
+        id_book: args.id_book,
+        id_user: context.user.id
+      };
+      console.log(com);
+
+      await bd("critiques").insert(com);
+      return com;
     }
   },
   Book: {
