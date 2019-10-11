@@ -215,7 +215,6 @@ export const resolvers = {
         throw new Error("You must be admin");
       }
       //parcours des auteurs
-      console.log(args.authors.length);
       for (let i = 0; i < args.authors.length; i++) {
         let authorName = await bd
           .from("authors")
@@ -243,7 +242,6 @@ export const resolvers = {
       const livre = (await bd.from("books").where("ISBN", args.ISBN))[0];
       //lien entre l'auteur et le livre dans la bd
       for (let i = 0; i < auteurs.length; i++) {
-        console.log(parseInt(auteurs[i].id), typeof parseInt(auteurs[i].id));
         await bd("books_has_authors").insert({
           id_author: parseInt(auteurs[i].id),
           id_book: parseInt(livre.id)
@@ -259,10 +257,7 @@ export const resolvers = {
       if (context.user.role !== "admin") {
         throw new Error("You must be admin");
       }
-      console.log(args.ISBN);
-
       let ISBN = args.ISBN.replace(/-/g, "");
-      console.log(ISBN);
       //récupération du livre dans l'API
       let livre = (await axios.get(
         `https://openlibrary.org/api/books?bibkeys=ISBN:${ISBN}&jscmd=data`
@@ -270,7 +265,6 @@ export const resolvers = {
       //suppression des 18 premiers caractères et du dernier
       livre = livre.substring(18);
       livre = livre.substring(0, livre.length - 1);
-      console.log("Console de test " + livre);
 
       if (livre.length < 3) {
         throw new Error(
@@ -281,7 +275,6 @@ export const resolvers = {
       livre = JSON.parse(livre);
       //Tout l'objet est dans ISBN, ici, on raccourci les requêtes futures en outrepassant automatiquement ce stade ISBN
       livre = livre[`ISBN:${ISBN}`];
-      console.log(livre.title);
       let auteurs = [];
       // Récupération des auteurs définis dans l'objet de l'API
       for (let i = 0; i < livre.authors.length; i++) {
@@ -311,7 +304,6 @@ export const resolvers = {
         stock: args.stock
       });
       livre = (await bd.from("books").where("ISBN", ISBN))[0];
-      console.log(livre);
 
       for (let i = 0; i < auteurs.length; i++) {
         await bd("books_has_authors").insert({
