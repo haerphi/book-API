@@ -109,6 +109,8 @@ export const typeDefs = gql`
       comment: String!
       evaluation: String!
     ): Critique
+
+    AddEmprunt(id_book: Int!, id_user: Int!): Emprunt
   }
 `;
 
