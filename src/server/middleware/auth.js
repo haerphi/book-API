@@ -17,14 +17,17 @@ export const register = async (req, res, next) => {
           name: name
         });
         console.log(rep2);
-        res.send(`${email} added to the database`);
+        res.send({ sucess: true, message: `${email} added to the database` });
       } else {
-        res.send("This email/name already exists in the database");
+        res.send({
+          sucess: false,
+          error: "This email/name already exists in the database"
+        });
       }
     } else {
       res.send({
         sucess: false,
-        token: "You need to send an email and a password"
+        error: "You need to send an email and a password"
       });
     }
   }
@@ -51,18 +54,18 @@ export const authentification = async (req, res, next) => {
         }
         res.send(userInfo);
       } else {
-        res.send("Email and password doesn't match");
+        res.send({ sucess: false, error: "Email and password doesn't match" });
       }
       //ajouter dans la BD le token
       //TODO
     } else {
       res.send({
         sucess: false,
-        token: "You need to send an email and a password"
+        error: "You need to send an email and a password"
       });
     }
   } else {
-    res.send({ sucess: false, token: "No token for you" });
+    res.send({ sucess: false, error: "No token for you" });
   }
   return null;
 };
@@ -78,9 +81,9 @@ export const authenticated = async token => {
     if (rep.length > 0) {
       return rep[0];
     } else {
-      return { error: "incorrect informations in the token" };
+      return { sucess: false, error: "incorrect informations in the token" };
     }
   } catch (err) {
-    return { error: err.message };
+    return { sucess: false, error: err.message };
   }
 };
