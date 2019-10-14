@@ -21,9 +21,21 @@
 Route public:
 
 - post `/register` : `{body: {email: string, password: string, name: string}}` return une string
-- post `/get-token`: `{body: {email: string, password: string, name: string}}` return un objet
+- post `/get-token`: `{body: {email: string, password: string}}` return un objet
 
 Route membre:
 
 - get `/graphql`: accès aux bases de données pour les consulter.
+
+## Possibilités de requêtes: 
+
+* User 
+  * email
+  * name
+  * avis 
+    * pertinent
+  * emprunt
+    * book
+    
+  
 
