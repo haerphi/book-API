@@ -395,9 +395,21 @@ export const resolvers = {
       };
 
       //vérifier si l'utilisateur a déjà fait une critique sur le livre
-      //si non -> insert
-      await bd("critiques").insert(com);
-      //si oui -> update
+
+      let tempTab = bd
+        .from("critiques")
+        .where("id_user", context.user.id)
+        .where("id_book", args.id_book);
+      if (tempTab.length < 1) {
+        //si non -> insert
+        await bd("critiques").insert(com);
+      } else {
+        //si oui -> update
+        await bd("critiques")
+          .where("id_user", context.user.id)
+          .where("id_book", args.id_book)
+          .update(com);
+      }
       return com;
     },
     addAvisCritique: async (parent, args, context) => {
@@ -417,10 +429,21 @@ export const resolvers = {
         id_user: context.user.id,
         pertinent: args.pertinent
       };
+      let tempTab = bd
+        .from("avis_critique")
+        .where("id_user", context.user.id)
+        .where("id_critique", args.id_critique);
       //vérifier si l'utilisateur a déjà poster un avis sur cette critique
-      //si non -> insert
-      await bd("avis_critique").insert(avis);
-      //si oui -> update
+      if (tempTab.length < 1) {
+        //si non -> insert
+        await bd("avis_critique").insert(avis);
+      } else {
+        //si oui -> update
+        await bd("avis_critique")
+          .where("id_user", context.user.id)
+          .where("id_critique", args.id_critique)
+          .update(avis);
+      }
       return avis;
     }
   },
