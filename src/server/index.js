@@ -8,6 +8,7 @@ import bd from "./bd/postgresql";
 import { authenticated, authentification, register } from "./middleware/auth";
 
 const app = new express();
+app.use(cors());
 
 //port for the app
 const { APP_PORT, PORT } = process.env;
