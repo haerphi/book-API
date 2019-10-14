@@ -45,7 +45,11 @@ export const authentification = async (req, res, next) => {
         var token = jwt.sign({ id: rep[0].id }, secret_key, {
           expiresIn: "59m"
         });
-        res.send({ sucess: true, token: token });
+        let userInfo = { sucess: true, token: token };
+        if (rep[0].role === "admin") {
+          userInfo[admin] = true;
+        }
+        res.send(userInfo);
       } else {
         res.send("Email and password doesn't match");
       }
