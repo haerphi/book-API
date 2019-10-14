@@ -47,7 +47,7 @@ export const authentification = async (req, res, next) => {
         });
         let userInfo = { sucess: true, token: token };
         if (rep[0].role === "admin") {
-          userInfo[admin] = true;
+          userInfo["admin"] = true;
         }
         res.send(userInfo);
       } else {
