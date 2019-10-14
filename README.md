@@ -14,16 +14,16 @@
 - installation des dépendances : `npm install`
 - build du projet : `npm run work:server`
 - dans un autre terminal : `docker-compose up`
+- Don't forget to pick
 
 ## Utilisation de l'API
 
 Route public:
 
-- post `/register` : `{body: {email: string, password: string}}` return une string
-- post `/get-token`: `{body: {email: string, password: string}}` return un objet
+- post `/register` : `{body: {email: string, password: string, name: string}}` return une string
+- post `/get-token`: `{body: {email: string, password: string, name: string}}` return un objet
 
 Route membre:
 
 - get `/graphql`: accès aux bases de données pour les consulter.
 
-  -
