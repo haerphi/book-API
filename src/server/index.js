@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const { ApolloServer } = require("apollo-server-express");
 import { typeDefs, resolvers } from "./graphQL/schema";
 import bd from "./bd/postgresql";
+var cors = require("cors");
 
 import { authenticated, authentification, register } from "./middleware/auth";
 
