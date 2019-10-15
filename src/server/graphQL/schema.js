@@ -170,7 +170,7 @@ export const resolvers = {
       if (!context.user.id) {
         throw new Error(context.user.error);
       }
-      return await bd.from("users").where("id", context.user.id);
+      return (await bd.from("users").where("id", context.user.id))[0];
     },
 
     critiques: async (parent, args, context) => {
