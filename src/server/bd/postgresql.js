@@ -25,10 +25,11 @@ if (url) {
 module.exports = knex({
   client: "pg",
   version: "7.2",
-  connection: {
-    host: host || "postgres",
-    user: user || "dev",
-    password: mdp || "dev",
-    database: database || "booksApi"
-  }
+  // connection: {
+  //   host: host || "postgres",
+  //   user: user || "dev",
+  //   password: mdp || "dev",
+  //   database: database || "booksApi"
+  // }
+  connection: process.env.DATABASE_URL
 });
