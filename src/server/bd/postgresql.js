@@ -1,7 +1,8 @@
 const knex = require("knex");
-console.log(process.env.DATABASE_URL);
+
 module.exports = knex({
   client: "pg",
   version: "7.2",
-  connection: process.env.DATABASE_URL
+  connection:
+    process.env.DATABASE_URL || `postgres://dev:dev@postgres:5432/booksApi`
 });
