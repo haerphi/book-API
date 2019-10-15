@@ -70,6 +70,7 @@ export const typeDefs = gql`
 
     users: [User]
     user(id: Int): User
+    actualUser: User
 
     critiques: [Critique]
     critique(id: Int!): Critique
@@ -163,6 +164,13 @@ export const resolvers = {
       }
       const rep = await bd.from("users").where("id", args.id);
       return rep[0];
+    },
+
+    actualUser: async (parent, args, context) => {
+      if (!context.user.id) {
+        throw new Error(context.user.error);
+      }
+      return await bd.from("users").where("id", context.user.id);
     },
 
     critiques: async (parent, args, context) => {
