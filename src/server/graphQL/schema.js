@@ -410,7 +410,8 @@ export const resolvers = {
         .where("id_book", args.id_book);
       if (tempTab.length < 1) {
         //si non -> insert
-        await bd("critiques").insert(com);
+        let rep = await bd("critiques").insert(com);
+        console.log(rep);
       } else {
         //si oui -> update
         await bd("critiques")
