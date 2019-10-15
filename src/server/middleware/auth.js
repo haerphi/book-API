@@ -48,7 +48,7 @@ export const authentification = async (req, res) => {
             if (rep.length > 0) {
                 //if it matches
                 const token = jwt.sign({id: rep[0].id}, secret_key, {
-                    expiresIn: "59m",
+                    expiresIn: "24h",
                 });
                 const userInfo = {sucess: true, token};
                 if (rep[0].role === "admin") {
