@@ -438,7 +438,7 @@ export const resolvers = {
         id_user: context.user.id,
         pertinent: args.pertinent
       };
-      let tempTab = bd
+      let tempTab = await bd
         .from("avis_critique")
         .where("id_user", context.user.id)
         .where("id_critique", args.id_critique);
