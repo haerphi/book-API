@@ -404,15 +404,13 @@ export const resolvers = {
 
       //vérifier si l'utilisateur a déjà fait une critique sur le livre
 
-      let tempTab = bd
+      let tempTab = await bd
         .from("critiques")
         .where("id_user", context.user.id)
         .where("id_book", args.id_book);
-      console.log(tempTab);
       if (tempTab.length < 1) {
         //si non -> insert
-        let rep = await bd("critiques").insert(com);
-        console.log(rep);
+        await bd("critiques").insert(com);
       } else {
         //si oui -> update
         await bd("critiques")
@@ -420,6 +418,7 @@ export const resolvers = {
           .where("id_book", args.id_book)
           .update(com);
       }
+
       return com;
     },
     addAvisCritique: async (parent, args, context) => {
