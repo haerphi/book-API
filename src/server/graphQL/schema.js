@@ -408,6 +408,7 @@ export const resolvers = {
         .from("critiques")
         .where("id_user", context.user.id)
         .where("id_book", args.id_book);
+      console.log(tempTab);
       if (tempTab.length < 1) {
         //si non -> insert
         let rep = await bd("critiques").insert(com);
