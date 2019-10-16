@@ -574,6 +574,12 @@ export const resolvers = {
         async user(emprunt) {
             return (await bd.from("users").where("id", emprunt.id_user))[0];
         },
+        date_location(emprunt) {
+            const myDate = DateTime.fromObject(
+                emprunt.date_location,
+            ).toISODate();
+            return myDate;
+        },
     },
     Avis: {
         async user(avis) {
